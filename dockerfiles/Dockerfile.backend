@@ -1,0 +1,11 @@
+# dockerfiles/Dockerfile.backend
+FROM eclipse-temurin:17-jdk-jammy AS build
+WORKDIR /workspace
+COPY . /workspace
+RUN ./mvnw -B -DskipTests package
+
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app/app.jar"]

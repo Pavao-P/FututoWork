@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: futurowork
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./futurowork-backend/src/main/resources/db:/docker-entrypoint-initdb.d
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  backend:
+    build:
+      context: ./futurowork-backend
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: futurowork
+      DB_USER: root
+      DB_PASS: root
+      JWT_SECRET: ChangeThisSecretForDevChangeThisSecret
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - rabbitmq
